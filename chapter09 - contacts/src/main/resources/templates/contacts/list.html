@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}" xmlns:hx="http://www.w3.org/1999/xhtml">
+<body>
+<div layout:fragment="content">
+    <div>
+        <div class="sm:flex sm:items-center mb-4">
+            <div class="sm:flex-auto">
+                <h1 class="text-base font-semibold leading-6 text-gray-900">Contacts</h1>
+                <p class="mt-2 text-sm text-gray-700">A list of all your contacts.</p>
+            </div>
+            <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                <a th:href="@{/contacts/new}"
+                   class="button-primary">
+                    Add contact
+                </a>
+            </div>
+        </div>
+        <!-- tag::search[] -->
+        <div class="flex gap-x-2 items-center">
+            <form th:action="@{/contacts}"
+                  th:method="get">
+                <label for="search" class="text-sm font-medium leading-6 text-gray-900">Search</label>
+                <input type="search" name="q" id="search"
+                       th:value="${query}"
+                       hx:get="@{/contacts}"
+                       hx-trigger="search, keyup delay:200ms changed"
+                       hx-target="tbody"
+                       hx-swap="outerHTML"
+                       hx-push-url="true"
+                       hx-indicator="#spinner"
+                       class="rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                > <!--.-->
+                <button type="submit"
+                        class="text-indigo-400 hover:text-indigo-900">Search
+                </button>
+            </form>
+            <svg id="spinner"
+                 class="htmx-indicator animate-spin ml-3 mr-3 h-5 w-5 text-black"
+                 xmlns="http://www.w3.org/2000/svg"
+                 fill="none" viewBox="0 0 24 24"> <!--.-->
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+        </div>
+        <!-- tag::archive[] -->
+        <div class="mt-4 flex">
+            <div id="archive-ui" hx-target="this" hx-swap="outerHTML" class="h-8 w-80">
+                <button hx:post="@{/contacts/archives}"
+                        class="button-secondary">
+                    Download archive
+                </button>
+            </div>
+        </div>
+        <!-- end::archive[] -->
+        <!-- end::search[] -->
+        <div class="mt-8 flow-root">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                    <table class="min-w-full divide-y divide-gray-300">
+                        <thead>
+                        <tr>
+                            <th scope="col" class="table-header-first-column">Name</th>
+                            <th scope="col" class="table-header">Phone</th>
+                            <th scope="col" class="table-header">Email</th>
+                            <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                                <span class="sr-only">Edit or View</span>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                        <tr th:each="contact : ${contacts}">
+                            <td class="table-value-first-column"
+                                th:text="|${contact.givenName} ${contact.familyName}|"></td>
+                            <td class="table-value"
+                                th:text="${contact.phone}"></td>
+                            <td class="table-value"
+                                th:text="${contact.email}"></td>
+
+                            <!-- tag::rowactions[] -->
+                            <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0 flex gap-x-2">
+                                <a class="text-indigo-400 hover:text-indigo-900"
+                                   th:href="@{/contacts/{id}/edit(id=${contact.id.value()})}">Edit</a>
+                                <a class="text-indigo-400 hover:text-indigo-900"
+                                   th:href="@{/contacts/{id}(id=${contact.id.value()})}">View</a>
+                                <a href="#"
+                                   class="text-indigo-400 hover:text-indigo-900"
+                                   hx:delete="@{/contacts/{id}(id=${contact.id.value()})}"
+                                   hx:confirm="|Are you sure you want to delete the contact ${contact.givenName} ${contact.familyName}?|"
+                                   hx-swap="outerHTML swap:1s"
+                                   hx-target="closest tr">Delete</a> <!--.-->
+                            </td>
+                            <!-- end::rowactions[] -->
+
+                        </tr>
+                        <!-- tag::clicktoload[] -->
+                        <tr th:if="${(page + 1) * size < totalElements}">
+                            <td colspan="4">
+                                <div class="flex justify-center mt-4">
+                                    <span
+                                            hx:get="@{/contacts(page=${page + 1},q=${query})}"
+                                            hx-trigger="revealed"
+                                            hx-select="tbody > tr"
+                                            hx-target="closest tr"
+                                            hx-swap="outerHTML"
+                                    > <!--.-->
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- end::clicktoload[] -->
+                        </tbody>
+                    </table>
+<!--
+                    <div class="flex justify-between mt-4">
+                        <a th:href="${page > 0}?@{/contacts(page=${page - 1})}:'#'"
+                           class="button-secondary w-32 text-center"
+                           th:classappend="${page == 0?'disabled':null}">Previous</a>
+                        <a th:href="${(page + 1) * size < totalElements}?@{/contacts(page=${page + 1})}:'#'"
+                           class="button-secondary w-32 text-center"
+                           th:classappend="${(page + 1) * size >= totalElements?'disabled':null}">Next</a>
+                    </div>
+-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

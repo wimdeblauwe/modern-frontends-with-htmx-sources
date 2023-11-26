@@ -1,0 +1,77 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" xmlns:hx="http://www.w3.org/1999/xhtml"
+      lang="en">
+<div th:fragment="textinput(labelText, fieldName)"
+     th:class="${cssClass}">
+    <label th:for="${fieldName}" class="block text-sm font-medium leading-6 text-gray-900"
+           th:text="${labelText}">
+        Text input label
+    </label>
+    <div class="relative mt-2 rounded-md shadow-sm">
+        <input th:id="${fieldName}"
+               type="text"
+               th:field="*{__${fieldName}__}"
+               class="block w-full rounded-md border-0 py-1.5 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 ring-1 ring-inset"
+               th:classappend="${#fields.hasErrors('__${fieldName}__')?'ring-red-300 focus:border-red-300 focus:ring-red-500':'ring-gray-300 focus:ring-gray-500 focus:border-gray-500'}">
+        <div th:classappend="${#fields.hasErrors('__${fieldName}__')?'':'hidden'}"
+             th:id="'__${fieldName}__'+ '-error-icon'"
+             class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+            <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
+                      clip-rule="evenodd"/>
+            </svg>
+        </div>
+    </div>
+    <p th:classappend="${#fields.hasErrors('__${fieldName}__')?'':'hidden'}"
+       th:id="'__${fieldName}__'+ '-error'"
+       th:text="${#strings.listJoin(#fields.errors('__${fieldName}__'), ', ')}"
+       class="mt-2 text-sm text-red-600">Field validation error message(s).</p>
+</div>
+
+<!-- tag::emailinput[] -->
+<!-- tag::emailinputDiv[] -->
+<div th:fragment="emailinput(labelText, fieldName, inlineValidationUrl)"
+     th:id="|${fieldName}-form-element|"
+     th:class="${cssClass}"
+     th:x-data="|{showErrorIcon: ${#fields.hasErrors('__${fieldName}__')}}|"
+     th:x-on:htmx:after-settle="|showErrorIcon = !document.getElementById('${fieldName}-error').classList.contains('hidden')|"
+>
+    <!-- end::emailinputDiv[] -->
+    <label th:for="${fieldName}" class="block text-sm font-medium leading-6 text-gray-900"
+           th:text="${labelText}">
+        Text input label
+    </label>
+    <div class="relative mt-2 rounded-md shadow-sm">
+        <input th:id="${fieldName}"
+               type="email"
+               th:field="*{__${fieldName}__}"
+               hx:trigger="${inlineValidationUrl != null?'keyup changed delay:200ms':null}"
+               hx:get="${inlineValidationUrl?:null}"
+               hx:select="|#${fieldName}-error|"
+               hx:target="|#${fieldName}-error|"
+               hx-swap="outerHTML"
+               hx-include="closest form"
+               class="block w-full rounded-md border-0 py-1.5 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 ring-1 ring-inset"
+               th:classappend="${#fields.hasErrors('__${fieldName}__')?'ring-red-300 focus:border-red-300 focus:ring-red-500':'ring-gray-300 focus:ring-gray-500 focus:border-gray-500'}"
+        > <!--.-->
+        <!-- tag::emailinputErrorIcon[] -->
+        <div x-show="showErrorIcon"
+             th:id="'__${fieldName}__'+ '-error-icon'"
+             class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+            <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z"
+                      clip-rule="evenodd"/>
+            </svg>
+        </div>
+        <!-- end::emailinputErrorIcon[] -->
+    </div>
+    <!-- tag::emailinputError[] -->
+    <p th:classappend="${#fields.hasErrors('__${fieldName}__')?'':'hidden'}"
+       th:id="'__${fieldName}__'+ '-error'"
+       th:text="${#strings.listJoin(#fields.errors('__${fieldName}__'), ', ')}"
+       class="mt-2 text-sm text-red-600">Field validation error message(s).</p>
+    <!-- end::emailinputError[] -->
+</div>
+<!-- end::emailinput[] -->

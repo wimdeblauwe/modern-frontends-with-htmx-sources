@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!-- tag::head[] -->
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<!-- end::head[] -->
+<body>
+<div layout:fragment="content" class="container mx-auto max-w-2xl">
+    <h1 class="text-2xl mb-4">Bookmarks</h1>
+    <!-- tag::form[] -->
+    <form id="bookmark-creation-form"
+          th:object="${formData}"
+          hx:post="@{/bookmarks}"
+          hx-swap="beforeend"
+          hx-target="#bookmarks-list">
+        <input type="hidden"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}"/>  <!--.-->
+        <!-- end::form[] -->
+        <div class="relative mb-4">
+            <label for="name" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-900">Name</label>
+            <input type="text" name="name" id="name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Thymeleaf">
+        </div>
+        <div class="relative mb-4">
+            <label for="url" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-900">Url</label>
+            <input type="text" name="url" id="url" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="https://www.thymeleaf.org/">
+        </div>
+        <button type="submit" class="rounded-full bg-indigo-600 px-2.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
+    </form>
+
+    <!-- tag::bookmarks-list[] -->
+    <div id="bookmarks-list" class="mt-4">
+        <th:block th:each="bookmark : ${bookmarks}">
+            <div th:fragment="bookmark" class="bookmark mb-1">
+                <span th:text="${bookmark.name()}"></span>
+                <span>-</span>
+                <span th:text="${bookmark.url()}" class="text-gray-500"></span>
+                <button class="ml-4 rounded-full bg-red-400 px-2.5 py-1 text-sm"
+                        hx:delete="@{/bookmarks/{id}(id=${bookmark.id()})}"
+                        hx-target="closest .bookmark"
+                        hx-swap="outerHTML">Delete</button>
+            </div>
+        </th:block>
+    </div>
+    <!-- end::bookmarks-list[] -->
+</div>
+<!-- tag::script-content[] -->
+<th:block layout:fragment="script-content">
+    <script th:inline="javascript"> <!--.-->
+        const token = /*[[${_csrf.token}]]*/ 'sample-csrf-token'; // <.>
+        const headerName = /*[[${_csrf.headerName}]]*/ 'X-Sample-CSRF-Header';
+        document.addEventListener('htmx:configRequest', (evt) => { // <.>
+            evt.detail.headers[headerName] = token;
+        });
+    </script>
+</th:block>
+<!-- end::script-content[] -->
+</body>
+</html>

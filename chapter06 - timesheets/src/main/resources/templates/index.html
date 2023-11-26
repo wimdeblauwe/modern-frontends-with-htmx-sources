@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}" xmlns:hx="http://www.w3.org/1999/xhtml">
+<body>
+<div layout:fragment="content" class="container mx-auto max-w-2xl my-4">
+    <div class="flex justify-between mb-4">
+        <h1 class="text-3xl">Timesheets</h1>
+        <!-- tag::total[] -->
+        <div>
+            <div class="text-sm text-gray-400 uppercase">Total</div>
+            <div id="overall-total"
+                 class="text-2xl"
+                 th:text="${total}"
+                 hx-swap-oob="true">0 <!--.-->
+            </div>
+        </div>
+        <!-- end::total[] -->
+    </div>
+    <div>
+        <div class="grid grid-cols-9 mb-2 gap-x-2">
+            <div class="font-bold col-span-2">Projects</div>
+            <div th:each="day : ${days}">
+                <div class="flex justify-center">
+                    <div th:text="${#temporals.format(day, 'dd MMM')}"></div>
+                </div>
+            </div>
+        </div>
+        <div th:each="project : ${projects}" class="grid grid-cols-9 mb-2 gap-x-2">
+            <div th:text="${project.name()}" class="flex items-center col-span-2"></div>
+            <div th:each="day : ${days}">
+                <div>
+                    <!-- tag::input[] -->
+                    <input type="text" class="w-full"
+                           name="value"
+                           hx:put="@{/projects/{projectId}/{date}(projectId=${project.id},date=${day})}"
+                           hx-trigger="keyup changed delay:500ms">
+                    <!-- end::input[] -->
+                </div>
+            </div>
+        </div>
+        <!-- tag::daytotals[] -->
+        <div class="grid grid-cols-9 mb-2 gap-x-2">
+            <div class="col-span-2"></div>
+            <div th:each="day : ${days}">
+                <div class="flex justify-center">
+                    <div th:fragment="day-total"
+                         hx-swap-oob="true"
+                         th:id="${'dayTotal_' + #temporals.format(day, 'yyyyMMdd')}"
+                         th:text="${__${'dayTotal_' + #temporals.format(day, 'yyyyMMdd')}__}">0</div> <!--.-->
+                </div>
+            </div>
+        </div>
+        <!-- end::daytotals[] -->
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" xmlns:hx="http://www.w3.org/1999/xhtml"
+      lang="en">
+<!--/*@thymesVar id="item" type="com.wimdeblauwe.examples.todomvcthymeleaf.todoitem.web.TodoItemController.TodoItemDto"*/-->
+<!-- tag::todo-item-fragment[] -->
+<li th:fragment="todoItem(item)" th:classappend="${item.completed?'completed':''}" th:id="|list-item-${item.id}|">
+    <div class="view">
+        <input th:id="|toggle-checkbox-${item.id}|" class="toggle" type="checkbox"
+               th:attrappend="checked=${item.completed?'true':null}"
+               hx:put="@{/{id}/toggle(id=${item.id})}"
+               hx:target="|#list-item-${item.id}|"
+               hx-trigger="click"
+               hx-swap="outerHTML"
+        >
+        <label th:text="${item.title}">Taste JavaScript</label>
+        <!-- tag::todo-item-delete-fragment[] -->
+        <button class="destroy"
+                hx:delete="@{/{id}(id=${item.id})}"
+                hx:target="|#list-item-${item.id}|"
+                hx-trigger="click"
+                hx-swap="outerHTML"
+        ></button>
+        <!-- end::todo-item-delete-fragment[] -->
+    </div>
+</li>
+<!-- end::todo-item-fragment[] -->
+<!-- tag::number-of-items-fragment[] -->
+<span th:fragment="active-items-count"
+      hx:get="@{/active-items-count}"
+      hx-swap="outerHTML"
+      hx-trigger="itemAdded from:body, itemCompletionToggled from:body">
+    <th:block th:unless="${numberOfActiveItems == 1}">
+            <span class="todo-count"><strong th:text="${numberOfActiveItems}">0</strong> items left</span>
+        </th:block>
+        <th:block th:if="${numberOfActiveItems == 1}">
+            <span class="todo-count"><strong>1</strong> item left</span>
+        </th:block>
+</span>
+<!-- end::number-of-items-fragment[] -->
+</html>

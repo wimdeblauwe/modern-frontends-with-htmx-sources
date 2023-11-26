@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}" xmlns:hx="http://www.w3.org/1999/xhtml">
+<body>
+<div layout:fragment="content">
+    <!-- tag::alert[] -->
+    <div class="m-4"
+         hx-ext="sse"
+         sse-connect="/progress"
+         hx-on::sse-error="document.getElementById('connectionAlert').classList.remove('hidden')"
+         hx-on::sse-open="document.getElementById('connectionAlert').classList.add('hidden')"
+    > <!--.-->
+        <div id="connectionAlert"
+                class="alert alert-warning mb-4 hidden"> <!--.-->
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            <span>Warning: No connection with server anymore. Live updates are disabled.</span>
+        </div>
+        <!-- end::alert[] -->
+        <form hx-encoding="multipart/form-data" hx:post="@{/}" hx-disabled-elt=".disable-during-request" hx-swap="none">
+            <input type="file" name="file"
+                   class="file-input file-input-bordered w-full max-w-xs disable-during-request"/>
+            <button class="btn btn-primary disable-during-request">Import</button>
+        </form>
+
+        <div class="mt-4" sse-swap="progress-event">
+
+        </div>
+
+        <div class="text-gray-700 mt-4">Progress log:</div>
+        <div id="progress-log"
+             class="mt-4 p-2 h-96 font-mono bg-gray-700 text-gray-100 overflow-y-auto"
+             hx-swap="beforeend"
+             sse-swap="log-event"
+             hx-on::after-settle="this.scrollTo(0, this.scrollHeight);">
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script-content">
+    <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/ext/sse.js}"></script>
+</th:block>
+</body>
+</html>

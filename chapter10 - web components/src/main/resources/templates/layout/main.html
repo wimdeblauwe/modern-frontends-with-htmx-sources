@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html th:lang="|${#locale.language}-${#locale.country}|"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <link rel="stylesheet" th:href="@{/css/application.css}">
+    <!-- tag::shoelace-css[] -->
+    <link rel="stylesheet" th:href="@{/webjars/shoelace-style__shoelace/dist/themes/light.css}">
+    <!-- end::shoelace-css[] -->
+</head>
+<body>
+<main layout:fragment="content">
+</main>
+
+<script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
+<!-- tag::shoelace-js[] -->
+<script type="module" th:src="@{/webjars/shoelace-style__shoelace/cdn/shoelace-autoloader.js}"></script>
+<!-- end::shoelace-js[] -->
+<th:block layout:fragment="script-content">
+
+</th:block>
+</body>
+</html>

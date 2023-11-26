@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}"
+      xmlns:hx="http://www.w3.org/1999/xhtml">
+<body>
+<div layout:fragment="content" class="container">
+    <h1 class="mt-2">Error Handling Demo</h1>
+    <form hx:get="@{/number-facts}"
+          hx-target="#result"
+          class="d-flex align-items-center">
+        <label class="me-4">
+            Enter a number to get a fact about that number:
+            <input type="number" name="number">
+        </label>
+        <button type="submit" class="btn btn-primary me-2">Get fact!</button>
+        <div class="htmx-indicator spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </form>
+    <div id="result" class="mt-4"></div>
+    <div id="error-parent"></div> <!--.-->
+
+    <template th:replace="~{fragments :: error-message}"></template> <!--.-->
+    <template th:replace="~{fragments :: timeout-message}"></template>
+</div>
+<th:block layout:fragment="script-content">
+    <script>
+        document.addEventListener('htmx:beforeRequest', ev => { // <.>
+            removeErrorMessage();
+        });
+        document.addEventListener('htmx:sendError', ev => { // <.>
+            showErrorMessage('htmx-request-error');
+        });
+        document.addEventListener('htmx:responseError', ev => { // <.>
+            showErrorMessage('htmx-request-error');
+        });
+        document.addEventListener('htmx:timeout', ev => { // <.>
+            showErrorMessage('htmx-timeout');
+        });
+
+        function removeErrorMessage() { // <.>
+            const errorParent = document.getElementById('error-parent');
+            errorParent.innerHTML = '';
+        }
+
+        function showErrorMessage(templateId) { // <.>
+            const clonedTemplate = document.getElementById(templateId).content.cloneNode(true);
+            const errorParent = document.getElementById('error-parent');
+            errorParent.innerHTML = '';
+            errorParent.appendChild(clonedTemplate);
+
+            document.getElementById('result').innerHTML = '';
+        }
+    </script>
+</th:block>
+</body>
+</html>

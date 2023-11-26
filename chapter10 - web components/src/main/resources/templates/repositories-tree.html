@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="repositories">
+    GitHub Repositories
+    <sl-tree-item th:each="repository : ${repositories}"
+                  lazy
+                  hx-trigger="sl-lazy-load consume"
+                  hx:get="@{/repositories/{name}/releases(name=${repository})}">
+        <span th:text="${repository}"></span>
+    </sl-tree-item>
+</th:block>
+
+<!-- tag::releasebody[] -->
+<th:block th:fragment="releases">
+    <span th:text="${repositoryName}"></span>
+    <sl-tree-item th:if="${releases.empty}" disabled>
+        No releases found
+    </sl-tree-item>
+    <sl-tree-item th:each="release : ${releases}"
+                  hx-target="#release-notes-container"
+                  hx-indicator="#release-notes-loading-indicator"
+                  hx:get="@{/repositories/{name}/releases/{id}(name=${repositoryName},id=${release.id})}"> <!--.-->
+        <span th:text="${release.name}"></span>
+    </sl-tree-item>
+</th:block>
+
+<div th:fragment="release-body" th:utext="${releaseBody}"> <!--.-->
+
+</div>
+<!-- end::releasebody[] -->
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<body>
+<div layout:fragment="content">
+    <h1 th:text="|${contact.givenName} ${contact.familyName}|"
+        class="text-base font-semibold leading-6 text-gray-900"></h1>
+
+    <div>
+        <div>Phone: <span th:text="${contact.phone}"></span></div>
+        <div>Email: <span th:text="${contact.email}"></span></div>
+    </div>
+
+    <div class="flex items-center gap-4 mt-4">
+        <a th:href="@{/contacts/{id}/edit(id=${contact.id.value()})}"
+           class="button-primary">Edit</a>
+        <a th:href="@{/contacts}"
+           class="button-secondary">Back</a>
+    </div>
+</div>
+</body>
+</html>

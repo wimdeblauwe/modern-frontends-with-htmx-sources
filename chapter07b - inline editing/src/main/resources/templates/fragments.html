@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org" xmlns:hx="http://www.w3.org/1999/xhtml">
+<body>
+<div th:fragment="issue-type(issueType)">
+    <th:block th:switch="${issueType.name()}">
+        <div th:case="'STORY'" class="text-gray-700 flex gap-x-1 items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                 stroke="currentColor"
+                 class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"/>
+            </svg>
+            <div>Story</div>
+        </div>
+    </th:block>
+</div>
+<div th:fragment="issue-priority(issuePriority)">
+    <th:block th:switch="${issuePriority.name()}">
+        <dd th:case="'MEDIUM'" class="text-gray-700 flex gap-x-1 items-center">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                 class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"/>
+            </svg>
+            <div>Medium</div>
+        </dd>
+    </th:block>
+</div>
+<!-- tag::issue-summary-view[] -->
+<div th:fragment="issue-summary-view(issue)"
+     class="flex items-center gap-x-1 group cursor-pointer"
+     hx:get="@{/issues/{key}/summary/inline-edit-form(key=${issue.key})}"
+     hx-swap="outerHTML"> <!--.-->
+    <div class="text-xl" th:text="${issue.summary}">As a web developer, I want to use htmx</div>
+    <div class="hidden group-hover:block">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+             class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"/>
+        </svg>
+    </div>
+</div>
+<!-- end::issue-summary-view[] -->
+
+<!-- tag::issue-summary-edit[] -->
+<div th:fragment="issue-summary-edit(issue)"
+     id="summary-edit-form-wrapper"
+     th:x-data="'{connectionFailure: false, cancelUrl: \'' + @{/issues/{key}/summary(key=${issue.key})} + '\'}'"> <!--.-->
+    <form id="summary-edit-form"
+          th:object="${formData}"
+          @submit.prevent=""
+          hx-trigger="keyup[key=='Enter']"
+          hx:put="@{/issues/{key}/summary(key=${issue.key})}"
+          hx-swap="outerHTML"
+          hx-target="#summary-edit-form-wrapper"
+          @keyup.escape="htmx.ajax('GET', cancelUrl, {target: '#summary-edit-form-wrapper', swap: 'outerHTML'})"
+          @htmx:timeout="connectionFailure = true"
+          @htmx:response-error="connectionFailure = true"
+          @htmx:send-error="connectionFailure = true"> <!--.-->
+        <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+            <input type="text"
+                   th:field="*{summary}"
+                   autofocus
+                   class="block text-xl flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0">
+        </div>
+        <div x-show="connectionFailure === true" class="text-red-500"> <!--.-->
+            There was a problem updating the summary.
+        </div>
+        <p th:if="${#fields.hasErrors('summary')}"
+           th:text="${#strings.listJoin(#fields.errors('summary'), ', ')}"
+           class="mt-2 text-sm text-red-600" id="summary-error">summary validation
+            error message(s).</p>
+
+    </form>
+</div>
+<!-- end::issue-summary-edit[] -->
+</body>
+</html>

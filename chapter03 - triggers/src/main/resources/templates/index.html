@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<body>
+<div layout:fragment="content" class="container mx-auto max-w-2xl mt-4">
+    <div class="float-right bg-amber-400 p-2">
+        <div id="message">
+            Request info
+        </div>
+    </div>
+    <h1 class="text-2xl mb-4">Trigger Demo</h1>
+    <h2 class="text-xl mb-2">Standard Events</h2>
+    <div class="mb-4">
+        <div class="text-sm">Button is triggered by the <code class="font-mono">click</code> event.</div>
+        <button class="items-center justify-center px-6 py-2.5 text-center text-white duration-200 bg-black border-2 border-black rounded-full inline-flex hover:bg-transparent hover:border-black hover:text-black focus:outline-none focus-visible:outline-black text-sm focus-visible:ring-black"
+                th:hx-get="@{/htmx}"
+                hx-target="#message">
+            Click me
+        </button>
+    </div>
+
+    <div class="mb-4">
+        <div class="text-sm">Input, textarea and select fields are triggered by the <code
+                class="font-mono">change</code> event
+            (For input and textarea, this triggers when you move the focus out of the input).
+        </div>
+        <div>
+            <div>
+                <div>Input</div>
+                <input id="my-text-input-id"
+                       type="text"
+                       name="my-text-input-name"
+                       class="mb-2"
+                       th:hx-get="@{/htmx}"
+                       hx-target="#message">
+            </div>
+            <div>
+                <div>Textarea</div>
+                <textarea
+                        th:hx-get="@{/htmx}"
+                        hx-target="#message"></textarea>
+            </div>
+            <div>Select</div>
+            <select th:hx-get="@{/htmx}"
+                    hx-target="#message">
+                <option>Choice 1</option>
+                <option>Choice 2</option>
+                <option>Choice 3</option>
+            </select>
+        </div>
+    </div>
+    <div class="mb-4">
+        <div class="text-sm">Forms are triggered by the <code class="font-mono">submit</code> event.
+        </div>
+        <form th:hx-get="@{/htmx}"
+              hx-target="#message">
+            <input type="text"
+                   name="form-text-input">
+            <button class="rounded bg-indigo-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    type="submit">Submit
+            </button>
+            <button class="rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                    type="reset">Reset
+            </button>
+        </form>
+    </div>
+    <div class="mb-4">
+        <div class="text-sm">Everything else is triggered by the <code class="font-mono">click</code> event.
+        </div>
+        <div class="bg-gray-200 p-2 cursor-pointer"
+             th:hx-get="@{/htmx}"
+             hx-target="#message">
+            I am a div you can click on to trigger a htmx request.
+        </div>
+    </div>
+
+    <h2 class="text-xl mb-2">Trigger Modifiers</h2>
+    <div class="mb-4">
+        <div class="text-sm">This has <code class="font-mono">hx-trigger="keyup changed delay:500ms"</code></div>
+        <input type="text" name="q"
+               th:hx-get="@{/htmx}"
+               hx-target="#message"
+               hx-trigger="keyup changed delay:500ms">
+    </div>
+    <div class="mb-4">
+        <div class="text-sm">This has <code class="font-mono">hx-trigger="keyup[shiftKey&&key=='K'] from:body"</code>.
+        </div>
+        <div class="bg-gray-200 p-2"
+             th:hx-get="@{/htmx}"
+             hx-target="this"
+             hx-trigger="keyup[shiftKey&&key=='K'] from:body">
+            Press SHIFT-K to have the div replaced by the htmx response.
+        </div>
+    </div>
+
+    <h2 class="text-xl mb-2">Trigger filters</h2>
+    <div class="mb-4">
+        <div class="text-sm">This has <code class="font-mono">hx-trigger="click[shiftKey]"</code></div>
+        <div class="bg-gray-200 p-2 cursor-pointer"
+             th:hx-get="@{/htmx}"
+             hx-target="#message"
+             hx-trigger="click[shiftKey]">
+            I am a div you can click on to trigger a htmx request if you have SHIFT pressed.
+        </div>
+    </div>
+
+    <h2 class="text-xl mb-2">Special events</h2>
+    <div class="mb-4">
+        <div class="text-sm">The div below is replaced 3 seconds after the page is loaded</div>
+        <div class="bg-gray-200 p-2"
+             th:hx-get="@{/htmx}"
+             hx-target="this"
+             hx-trigger="load delay:2s">
+            I am a div that will be replaced on page load.
+        </div>
+    </div>
+    <div class="mb-4">
+        <div class="text-sm">The div below is replaced every second</div>
+        <div class="bg-gray-200 p-2"
+             th:hx-get="@{/htmx}"
+             hx-target="this"
+             hx-trigger="every 1s">
+            I am a div that is replaced every second.
+        </div>
+    </div>
+    <div class="mb-4">
+        <div class="text-sm">The div below is only loaded when scrolling into view</div>
+        <div class="bg-gray-200 p-2"
+             th:hx-get="@{/htmx?delay=4}"
+             hx-on="htmx:beforeRequest: this.innerHTML = 'Starting request...'"
+             hx-target="this"
+             hx-trigger="revealed">
+            I am a div that is replaced when scrolling into view.
+        </div>
+    </div>
+</div>
+</body>
+</html>

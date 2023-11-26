@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}" xmlns:hx-on="http://www.w3.org/1999/xhtml">
+<body>
+<div layout:fragment="content">
+    <div hx-ext="ws"
+         ws-connect="/chatroom"
+         class="flex flex-col h-screen"
+         hx-on::ws-after-message="clearInput()">
+        <div id="messages" class="grow">
+            <div class="chat chat-start">
+                <div class="chat-bubble">Welcome to the chat!</div>
+            </div>
+        </div>
+        <div class="flex mb-4">
+            <form id="form" ws-send class="flex gap-2 mx-2 w-full">
+                <input id="chat-message-input"
+                       name="chatMessage"
+                       type="text"
+                       class="input input-bordered w-full"
+                       placeholder="Write a message"
+                       autofocus>
+                <button class="btn btn-neutral">Chat</button>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- tag::templates[] -->
+<template> <!--.-->
+    <div id="messages" hx-swap-oob="beforeend" th:fragment="incoming-message(message)"> <!--.-->
+        <div class="chat chat-start">
+            <div class="chat-bubble" th:text="${message}">Welcome to the chat!</div>
+        </div>
+    </div>
+</template>
+<template>
+    <div id="messages" hx-swap-oob="beforeend" th:fragment="user-message(message)"> <!--.-->
+        <div class="chat chat-end">
+            <div class="chat-bubble" th:text="${message}"></div>
+        </div>
+    </div>
+</template>
+<!-- end::templates[] -->
+<th:block layout:fragment="script-content">
+    <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/ext/ws.js}"></script>
+    <script>
+        function clearInput() {
+            let element = document.getElementById('chat-message-input');
+            element.value = '';
+            element.focus();
+        }
+    </script>
+</th:block>
+</body>
+</html>

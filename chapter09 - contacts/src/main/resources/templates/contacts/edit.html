@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<body>
+<div layout:fragment="content">
+    <div class="sm:flex sm:items-center mb-4">
+        <div class="sm:flex-auto">
+            <h1 class="text-base font-semibold leading-6 text-gray-900"> <!--.-->
+                <span th:if="${editMode.name() == 'CREATE'}">New contact</span>
+                <span th:if="${editMode.name() == 'UPDATE'}">Update contact</span>
+            </h1>
+            <p class="mt-2 text-sm text-gray-700"> <!--.-->
+                <span th:if="${editMode.name() == 'CREATE'}">Add a new contact to your list of contacts.</span>
+                <span th:if="${editMode.name() == 'UPDATE'}">Update a contact from your list of contacts.</span>
+            </p>
+        </div>
+    </div>
+    <!-- tag::form[] -->
+    <form th:action="${editMode?.name() == 'UPDATE'}?@{/contacts/{id}/edit(id=${formData.id})}:@{/contacts/new}"
+          th:object="${formData}"
+          th:method="post"
+          class="flex flex-col gap-y-2"> <!--.-->
+        <div th:replace="~{fragments/forms :: textinput('Given Name', 'givenName')}"></div>
+        <div th:replace="~{fragments/forms :: textinput('Family Name', 'familyName')}"></div>
+        <div th:replace="~{fragments/forms :: textinput('Phone', 'phone')}"></div>
+        <div th:replace="~{fragments/forms :: emailinput('Email', 'email', '/contacts/new')}"></div> <!--.-->
+        <button type="submit" class="button-primary mt-4">Save</button>
+    </form>
+    <!-- end::form[] -->
+    <!-- tag::delete[] -->
+    <div th:if="${editMode?.name() == 'UPDATE'}" class="flex mt-8 gap-4">
+        <button type="submit"
+                id="delete-button"
+                class="button-primary-danger"
+                hx:confirm="|Are you sure you want to delete the contact ${formData.givenName} ${formData.familyName}?|"
+                hx:delete="@{/contacts/{id}(id=${formData.id})}"
+                hx-target="body"
+                hx-push-url="true"
+        >Delete Contact</button> <!--.-->
+
+        <p>
+            <a href="/contacts"
+               class="button-secondary">Back</a>
+        </p>
+    </div>
+    <!-- end::delete[] -->
+</div>
+</body>
+</html>
