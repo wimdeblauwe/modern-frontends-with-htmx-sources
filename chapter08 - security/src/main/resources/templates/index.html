@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-<!-- tag::head[] -->
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main}">
-<!-- end::head[] -->
 <body>
 <div layout:fragment="content" class="container mx-auto max-w-2xl">
     <h1 class="text-2xl mb-4">Bookmarks</h1>
@@ -13,10 +11,7 @@
           th:object="${formData}"
           hx:post="@{/bookmarks}"
           hx-swap="beforeend"
-          hx-target="#bookmarks-list">
-        <input type="hidden"
-               th:name="${_csrf.parameterName}"
-               th:value="${_csrf.token}"/>  <!--.-->
+          hx-target="#bookmarks-list"> <!--.-->
         <!-- end::form[] -->
         <div class="relative mb-4">
             <label for="name" class="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-900">Name</label>
@@ -39,22 +34,14 @@
                 <button class="ml-4 rounded-full bg-red-400 px-2.5 py-1 text-sm"
                         hx:delete="@{/bookmarks/{id}(id=${bookmark.id()})}"
                         hx-target="closest .bookmark"
-                        hx-swap="outerHTML">Delete</button>
+                        hx-swap="outerHTML">Delete</button> <!--.-->
             </div>
         </th:block>
     </div>
     <!-- end::bookmarks-list[] -->
 </div>
-<!-- tag::script-content[] -->
 <th:block layout:fragment="script-content">
-    <script th:inline="javascript"> <!--.-->
-        const token = /*[[${_csrf.token}]]*/ 'sample-csrf-token'; // <.>
-        const headerName = /*[[${_csrf.headerName}]]*/ 'X-Sample-CSRF-Header';
-        document.addEventListener('htmx:configRequest', (evt) => { // <.>
-            evt.detail.headers[headerName] = token;
-        });
-    </script>
+    <!-- Add additional scripts there that are only needed for this page (Application wide scripts should be added in layout/main.html) -->
 </th:block>
-<!-- end::script-content[] -->
 </body>
 </html>

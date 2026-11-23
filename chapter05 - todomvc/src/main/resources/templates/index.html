@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       lang="en">
@@ -8,6 +8,9 @@
     <title>Template • TodoMVC</title>
     <link rel="stylesheet" th:href="@{/webjars/todomvc-common/base.css}">
     <link rel="stylesheet" th:href="@{/webjars/todomvc-app-css/index.css}">
+    <!-- tag::htmx-script[] -->
+    <script th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
+    <!-- end::htmx-script[] -->
 </head>
 <body>
 <section class="todoapp">
@@ -78,9 +81,6 @@
 </footer>
 <!-- Scripts here. Don't remove ↓ -->
 <script th:src="@{/webjars/todomvc-common/base.js}"></script>
-<!-- tag::htmx-script[] -->
-<script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
-<!-- end::htmx-script[] -->
 <!-- tag::disable-form-submit-script[] -->
 <script>
     document.getElementById('new-todo-form').addEventListener('submit', function (evt) {
@@ -90,14 +90,14 @@
 <!-- end::disable-form-submit-script[] -->
 <!-- tag::clear-input-script[] -->
 <script>
-    htmx.on('#new-todo-input', 'htmx:afterRequest', function (evt) { // <.>
-        evt.detail.elt.value = ''; // <.>
+    htmx.on('#new-todo-input', 'htmx:after:request', function (evt) { // <.>
+        evt.detail.ctx.sourceElement.value = ''; // <.>
     });
 </script>
 <!-- end::clear-input-script[] -->
 <!-- tag::show-sections-script[] -->
 <script>
-    htmx.on('htmx:afterSwap', function (evt) { // <.>
+    htmx.on('htmx:after:swap', function (evt) { // <.>
         let items = document.querySelectorAll('#todo-list li'); // <.>
         let mainSection = document.getElementById('main-section');
         let mainFooter = document.getElementById('main-footer');

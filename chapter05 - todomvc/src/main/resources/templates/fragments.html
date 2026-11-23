@@ -1,7 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org" xmlns:hx="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
       lang="en">
-<!--/*@thymesVar id="item" type="com.wimdeblauwe.examples.todomvcthymeleaf.todoitem.web.TodoItemController.TodoItemDto"*/-->
+<!--/*@thymesVar id="item" type="com.modernfrontendshtmx.todomvc.todo.web.TodoItemController.TodoItemDto"*/-->
 <!-- tag::todo-item-fragment[] -->
 <li th:fragment="todoItem(item)" th:classappend="${item.completed?'completed':''}" th:id="|list-item-${item.id}|">
     <div class="view">
@@ -28,7 +28,7 @@
 <span th:fragment="active-items-count"
       hx:get="@{/active-items-count}"
       hx-swap="outerHTML"
-      hx-trigger="itemAdded from:body, itemCompletionToggled from:body">
+      hx-trigger="itemAdded from:body, itemCompletionToggled from:body, itemDeleted from:body">
     <th:block th:unless="${numberOfActiveItems == 1}">
             <span class="todo-count"><strong th:text="${numberOfActiveItems}">0</strong> items left</span>
         </th:block>

@@ -1,24 +1,31 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sl="https://shadleaf.dev/sl"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main}">
 <body>
 <div layout:fragment="content">
-    <h1 th:text="|${contact.givenName} ${contact.familyName}|"
-        class="text-base font-semibold leading-6 text-gray-900"></h1>
-
-    <div>
-        <div>Phone: <span th:text="${contact.phone}"></span></div>
-        <div>Email: <span th:text="${contact.email}"></span></div>
-    </div>
-
-    <div class="flex items-center gap-4 mt-4">
-        <a th:href="@{/contacts/{id}/edit(id=${contact.id.value()})}"
-           class="button-primary">Edit</a>
-        <a th:href="@{/contacts}"
-           class="button-secondary">Back</a>
-    </div>
+    <sl:card> <!--.-->
+        <sl:card-header>
+            <sl:card-title level="1"
+                           th:text="|${contact.givenName} ${contact.familyName}|"></sl:card-title> <!--.-->
+        </sl:card-header>
+        <sl:card-content>
+            <dl class="contact-details">
+                <dt>Phone</dt>
+                <dd th:text="${contact.phone}"></dd>
+                <dt>Email</dt>
+                <dd th:text="${contact.email}"></dd>
+            </dl>
+        </sl:card-content>
+        <sl:card-footer class="actions">
+            <sl:button as="a"
+                       th:href="@{/contacts/{id}/edit(id=${contact.id.value()})}">Edit</sl:button>
+            <sl:button as="a" variant="outline"
+                       th:href="@{/contacts}">Back</sl:button> <!--.-->
+        </sl:card-footer>
+    </sl:card>
 </div>
 </body>
 </html>

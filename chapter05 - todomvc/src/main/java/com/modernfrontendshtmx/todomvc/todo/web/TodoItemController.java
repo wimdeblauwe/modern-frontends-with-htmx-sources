@@ -5,7 +5,6 @@ import com.modernfrontendshtmx.todomvc.todo.TodoItemNotFoundException;
 import com.modernfrontendshtmx.todomvc.todo.TodoItemRepository;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxTrigger;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,7 +63,7 @@ public class TodoItemController {
     @PutMapping("/{id}/toggle")
     public String toggleSelection(@PathVariable("id") Long id) {
         TodoItem todoItem = repository.findById(id)
-                                      .orElseThrow(() -> new TodoItemNotFoundException(id));
+                .orElseThrow(() -> new TodoItemNotFoundException(id));
 
         todoItem.setCompleted(!todoItem.isCompleted());
         repository.save(todoItem);
@@ -114,7 +113,7 @@ public class TodoItemController {
     public String htmxToggleTodoItem(@PathVariable("id") Long id,
                                      Model model) {
         TodoItem todoItem = repository.findById(id)
-                                      .orElseThrow(() -> new TodoItemNotFoundException(id));
+                .orElseThrow(() -> new TodoItemNotFoundException(id));
 
         todoItem.setCompleted(!todoItem.isCompleted());
         repository.save(todoItem);
@@ -164,8 +163,8 @@ public class TodoItemController {
 
     private TodoItemDto toDto(TodoItem todoItem) {
         return new TodoItemDto(todoItem.getId(),
-                               todoItem.getTitle(),
-                               todoItem.isCompleted());
+                todoItem.getTitle(),
+                todoItem.isCompleted());
     }
 
     private int getNumberOfActiveItems() {

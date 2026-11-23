@@ -2,24 +2,25 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/main}" xmlns:hx-on="http://www.w3.org/1999/xhtml">
+      layout:decorate="~{layout/main}">
 <body>
 <div layout:fragment="content">
-    <div hx-ext="ws"
-         ws-connect="/chatroom"
+    <div hx-ws:connect="/chatroom"
+         hx-target="#messages"
+         hx-swap="beforeend"
          class="flex flex-col h-screen"
-         hx-on::ws-after-message="clearInput()">
+         hx-on::ws:after:message:outgoing="clearInput()">
         <div id="messages" class="grow">
             <div class="chat chat-start">
                 <div class="chat-bubble">Welcome to the chat!</div>
             </div>
         </div>
         <div class="flex mb-4">
-            <form id="form" ws-send class="flex gap-2 mx-2 w-full">
+            <form id="form" hx-ws:send class="flex gap-2 mx-2 w-full">
                 <input id="chat-message-input"
                        name="chatMessage"
                        type="text"
-                       class="input input-bordered w-full"
+                       class="input w-full"
                        placeholder="Write a message"
                        autofocus>
                 <button class="btn btn-neutral">Chat</button>
@@ -29,22 +30,17 @@
 </div>
 <!-- tag::templates[] -->
 <template> <!--.-->
-    <div id="messages" hx-swap-oob="beforeend" th:fragment="incoming-message(message)"> <!--.-->
-        <div class="chat chat-start">
-            <div class="chat-bubble" th:text="${message}">Welcome to the chat!</div>
-        </div>
+    <div class="chat chat-start" th:fragment="incoming-message(message)"> <!--.-->
+        <div class="chat-bubble" th:text="${message}"></div>
     </div>
 </template>
 <template>
-    <div id="messages" hx-swap-oob="beforeend" th:fragment="user-message(message)"> <!--.-->
-        <div class="chat chat-end">
-            <div class="chat-bubble" th:text="${message}"></div>
-        </div>
+    <div class="chat chat-end" th:fragment="user-message(message)"> <!--.-->
+        <div class="chat-bubble" th:text="${message}"></div>
     </div>
 </template>
 <!-- end::templates[] -->
 <th:block layout:fragment="script-content">
-    <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/ext/ws.js}"></script>
     <script>
         function clearInput() {
             let element = document.getElementById('chat-message-input');

@@ -1,7 +1,5 @@
 package com.modernfrontendshtmx.wsdemo;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -11,6 +9,8 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,21 +24,20 @@ public class SocketHandler extends TextWebSocketHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(SocketHandler.class);
     private final List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
 
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
     private final SpringTemplateEngine templateEngine;
 
-    public SocketHandler(ObjectMapper objectMapper,
+    public SocketHandler(JsonMapper jsonMapper,
                          SpringTemplateEngine templateEngine) { //<.>
-        this.objectMapper = objectMapper;
+        this.jsonMapper = jsonMapper;
         this.templateEngine = templateEngine;
     }
 
     @Override
     public void handleTextMessage(WebSocketSession session,
-                                  TextMessage message)
-            throws IOException {
+                                  TextMessage message) {
 
-        Map<String, Object> value = objectMapper.readValue(message.getPayload(), new TypeReference<>() {
+        Map<String, Object> value = jsonMapper.readValue(message.getPayload(), new TypeReference<>() {
         });
         String userMessage = (String) value.get("chatMessage");
         sendMessageToWebSocketsessions(session, userMessage); //<.>

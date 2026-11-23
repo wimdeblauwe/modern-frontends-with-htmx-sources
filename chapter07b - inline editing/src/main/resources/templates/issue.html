@@ -36,10 +36,10 @@
   <div class="mt-4">
     <div class="font-medium text-gray-900">Sub-tasks</div>
     <form id="subtasks"
-          class="flex flex-col gap-y-1 mt-1 ml-4 divide-y border-t border-b"
-          hx:put="@{/issues/{key}/subtasks(key=${key})}"
-          hx-trigger="end"> <!--.-->
-      <div th:fragment="subtask-items" th:each="subTask,iter : ${issue.subTasks}" class="grid grid-cols-6"> <!--.-->
+          class="flex flex-col gap-y-1 mt-1 ml-4 divide-y border-t border-b border-gray-400"
+         hx:put="@{/issues/{key}/subtasks(key=${key})}"
+         hx-trigger="end"> <!--.-->
+      <div th:fragment="subtask-items" th:each="subTask,iter : ${issue.subTasks}" class="grid grid-cols-6 border-b-gray-400"> <!--.-->
         <input type="hidden" name="subTaskOrder" th:value="${iter.index}"> <!--.-->
         <div class="flex items-center gap-x-1">
           <div class="sortable-handle cursor-pointer group">
@@ -57,7 +57,7 @@
             </svg>
           </div>
           <div class="text-gray-400" th:text="${subTask.key}">XXX-124</div>
-        </div>
+</div>
         <div class="col-span-3" th:text="${subTask.summary}">Read website htmx.org</div>
         <div></div>
         <div th:text="#{'Status.' + ${subTask.status}}">In Progress</div>

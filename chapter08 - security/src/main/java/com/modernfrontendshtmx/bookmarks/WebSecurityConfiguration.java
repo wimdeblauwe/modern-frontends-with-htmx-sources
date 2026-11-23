@@ -27,9 +27,9 @@ public class WebSecurityConfiguration {
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder encoder) { // <.>
         UserDetails userDetails = User.builder()
-                .username("admin") // <.>
-                .password(encoder.encode("admin")) // <.>
-                .build();
+                                      .username("admin") // <.>
+                                      .password(encoder.encode("admin")) // <.>
+                                      .build();
         InMemoryUserDetailsManager inMemoryUserDetailsManager = new InMemoryUserDetailsManager();
         inMemoryUserDetailsManager.createUser(userDetails);
         return inMemoryUserDetailsManager;
@@ -42,7 +42,7 @@ public class WebSecurityConfiguration {
         var requestMatcher = new RequestHeaderRequestMatcher("HX-Request"); // <.>
         return http
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers(HttpMethod.GET, "/css/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/assets/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/webjars/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())

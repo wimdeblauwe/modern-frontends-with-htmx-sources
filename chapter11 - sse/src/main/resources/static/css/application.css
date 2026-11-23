@@ -1,3 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@source "../../templates";
+@source "../../../java"; /* The progress bar HTML is generated in HomeController */
+@plugin "daisyui";

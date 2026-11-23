@@ -4,22 +4,26 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <!-- tag::head[] -->
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="htmx-config" content='{"timeout": 1000}'> <!--.-->
-    <title></title>
-    <link rel="stylesheet" th:href="@{/css/application.css}">
-    
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="htmx-config" content='{"defaultTimeout":1000}'> <!--.-->
+  <title></title>
+  <vite:client></vite:client>
+  <vite:vite>
+    <vite:entry value="/css/application.css"></vite:entry>
+  </vite:vite>
+
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/dist/css/bootstrap.min.css}">
+
+  <script defer th:src="@{/webjars/bootstrap/dist/js/bootstrap.min.js}"></script>
+  <script defer th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
 </head>
 <!-- end::head[] -->
 <body>
 <main layout:fragment="content">
 </main>
 
-<script defer th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-<script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
-<th:block layout:fragment="script-content"> <!--.-->
+<th:block layout:fragment="script-content">
 
 </th:block>
 </body>

@@ -13,9 +13,7 @@ import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -46,15 +44,15 @@ public class HomeController {
     // tag::progress[]
     @GetMapping("/progress")
     public Flux<ServerSentEvent<String>> progress() {
-        Flux<ServerSentEvent<String>> heartbeat = Flux.interval(Duration.ofSeconds(5)) //<.>
-                .map(it -> ServerSentEvent.<String>builder().event("heartbeat").build()); //<.>
+        Flux<ServerSentEvent<String>> heartbeat = Flux.interval(Duration.ZERO, Duration.ofSeconds(5)) //<.>
+                .map(it -> ServerSentEvent.<String>builder().comment("heartbeat").build()); //<.>
         Flux<List<ProgressEvent>> updates = broker.subscribeToUpdates();
         return Flux.merge(heartbeat, //<.>
                         updates
-                                .flatMap(events -> Flux.just(
-                                                createLogEvent(events),
-                                                createProgressEvent(events))
-                                        .filter(Objects::nonNull)
+                                .filter(events -> !events.isEmpty())
+                                .map(events -> ServerSentEvent.<String>builder()
+                                        .data(createLogHtml(events) + createProgressBarHtml(events))
+                                        .build()
                                 ))
                 .doOnSubscribe(subscription -> LOGGER.debug("Subscription: {}", subscription))
                 .doOnCancel(() -> LOGGER.debug("cancel"))
@@ -62,24 +60,19 @@ public class HomeController {
                 .doFinally(signalType -> LOGGER.debug("finally: {}", signalType));
     }
 
-    private ServerSentEvent<String> createLogEvent(List<ProgressEvent> events) {
-        return ServerSentEvent.<String>builder()
-                .event("log-event")
-                .data(events.stream()
-                        .map(progressEvent -> "<div>%s</div>".formatted(replaceNewLines(progressEvent.message())))
-                        .collect(Collectors.joining()))
-                .build();
+    private String createLogHtml(List<ProgressEvent> events) {
+        return events.stream()
+                .map(progressEvent -> "<div>%s</div>".formatted(replaceNewLines(progressEvent.message())))
+                .collect(Collectors.joining());
     }
 
-    private static ServerSentEvent<String> createProgressEvent(List<ProgressEvent> events) {
-        return ServerSentEvent.<String>builder()
-                .event("progress-event")
-                .data(events.stream()
-                        .max(Comparator.comparing(progressEvent -> progressEvent.progress().value()))
-                        .map(progressEvent -> "<progress class=\"progress w-full h-6\" value=\"%d\" max=\"100\" ></progress>".
-                                formatted((int) (progressEvent.progress().value() * 100)))
-                        .orElse(null))
-                .build();
+    private String createProgressBarHtml(List<ProgressEvent> events) {
+        ProgressEvent lastEvent = events.getLast();
+        int percentage = (int) (lastEvent.progress().value() * 100);
+        return """
+                <div id="progress-bar" hx-swap-oob="innerHTML">
+                    <progress class="progress progress-primary w-full h-6" value="%d" max="100"></progress>
+                </div>""".formatted(percentage);
     }
     // end::progress[]
 

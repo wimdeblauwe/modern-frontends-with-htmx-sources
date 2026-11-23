@@ -1,3 +1,23 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+.container {
+    max-width: 80rem;
+    margin-inline: auto;
+    padding: var(--wa-space-l);
+}
+
+.release-notes-viewer {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--wa-space-l);
+    align-items: start;
+}
+
+#release-notes-container {
+    padding: var(--wa-space-l);
+    border-radius: var(--wa-border-radius-m);
+    background-color: var(--wa-color-brand-fill-quiet);
+}
+
+#release-notes-loading-indicator {
+    margin-block-start: var(--wa-space-m);
+    font-size: var(--wa-font-size-2xl);
+}
